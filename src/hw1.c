@@ -149,25 +149,23 @@ unsigned int reconstruct_array_sf(unsigned char *packets[], unsigned int packets
         packet_length >>= 4;
         packet_length &= ~((1 << 23) | (1 << 22) | (1 << 21) | (1 << 20) | (1 << 19) | (1 << 18) | (1 << 17) | (1 << 16) | (1 << 15) | (1 << 14));
         
-        unsigned int payload_length = packet_length - 16;
-        payload_length /= 4;
 
         int index_array = fragment_offset;
         
         if (checksum==compute_checksum_sf(packets[i])){
             int count = 0;
             
-            for (int j = 16; j<packet_length; j+=4){
-                count++;
+            for (int j = 16; j<(packet_length); j+=4){
                 int payload1 = packets[i][j] << 24;
                 int payload2 = packets[i][j+1] << 16;
                 int payload3 = packets[i][j+2] << 8;
                 int payload4 = packets[i][j+3];
-                int payload_part =  payload1 | payload2 | payload3 | payload4 ;
-                if (array_len>fragment_offset + count){
+                int payload_part =  (payload1 | payload2 | payload3 | payload4) ;
+                if (array_len>(fragment_offset + count)){
                     array[fragment_offset + count] = payload_part;
                     return_num+=1;
                 }
+                count++;
                 
                 
             }
