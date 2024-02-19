@@ -157,13 +157,18 @@ unsigned int reconstruct_array_sf(unsigned char *packets[], unsigned int packets
         if (checksum==compute_checksum_sf(packets[i])){
             
             for (int j = 16; j<packet_length; j+=4){
-                int payload_part = (packets[i][j] << 24) |  (packets[i][j+1] << 16) | (packets[i][j+2] << 8) | packets[i][j+3];
-                
+               
+                int payload1 = packets[i][j] << 24;
+                int payload2 = packets[i][j+1] << 16;
+                int payload3 = packets[i][j+2] << 8;
+                int payload4 = packets[i][j+3];
+                int payload_part =  payload1 | payload2 | payload3 | payload4 ;
                 if (array_len>fragment_offset + j - 16){
                     array[fragment_offset + j - 16] = payload_part;
+                    return_num+=1;
                 }
                 
-                return_num+=1;
+                
             }
             
         }
