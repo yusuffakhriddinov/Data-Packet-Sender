@@ -137,11 +137,10 @@ unsigned int compute_checksum_sf(unsigned char packet[]) {
 
 unsigned int reconstruct_array_sf(unsigned char *packets[], unsigned int packets_len, int *array, unsigned int array_len) {
     unsigned int return_num = 0;
-    
     for (int i = 0; i<packets_len; i++){
         unsigned int fragment_offset = (packets[i][8] << 8) | packets[i][9];
         fragment_offset >>=2;
-        
+        fragment_offset /= 4;
 
         unsigned int checksum = (packets[i][12] << 16) | (packets[i][13] << 8) | packets[i][14];
         checksum &= ~(1<<23);
@@ -151,24 +150,21 @@ unsigned int reconstruct_array_sf(unsigned char *packets[], unsigned int packets
         packet_length &= ~((1 << 23) | (1 << 22) | (1 << 21) | (1 << 20) | (1 << 19) | (1 << 18) | (1 << 17) | (1 << 16) | (1 << 15) | (1 << 14));
         
         unsigned int payload_length = packet_length - 16;
-        unsigned temp_index = payload_length / 4;
-        int j = 0;
+        payload_length /= 4;
+
         int index_array = fragment_offset;
         
-
         if (checksum==compute_checksum_sf(packets[i])){
-            fragment_offset /= 4;
-
-            for(j=0; j<temp_index; j++){
-
-                int payload_part = (packets[i][16+(j*4)<<24 | packets[i][17+(j*4)] <<16 | packets[i][18+(j*4)] <<8] | packets[i][19+(j*4)]);
-                
-                if(array_len>(fragment_offset +j)){
-                    array[fragment_offset+j] = payload_part;
-                    return_num++;
-                }
-            }
             
+            for (int j = 16; j<packet_length; j+=4){
+                int payload_part = (packets[i][j] << 24) |  (packets[i][j+1] << 16) | (packets[i][j+2] << 8) | packets[i][j+3];
+                
+                if (array_len>fragment_offset + j - 16){
+                    array[fragment_offset + j - 16] = payload_part;
+                }
+                
+                return_num+=1;
+            }
             
         }
         
