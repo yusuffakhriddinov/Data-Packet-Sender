@@ -136,7 +136,7 @@ unsigned int compute_checksum_sf(unsigned char packet[]) {
 
 
 unsigned int reconstruct_array_sf(unsigned char *packets[], unsigned int packets_len, int *array, unsigned int array_len) {
-    unsigned int count = 0;
+    unsigned int return_num = 0;
     
     for (int i = 0; i<packets_len; i++){
         unsigned int fragment_offset = (packets[i][8] << 8) | packets[i][9];
@@ -160,14 +160,12 @@ unsigned int reconstruct_array_sf(unsigned char *packets[], unsigned int packets
             fragment_offset /= 4;
 
             for(j=0; j<temp_index; j++){
-                int part1 = packets[i][16+(j*4)] <<24;
-                int part2 = packets[i][17+(j*4)] <<16;
-                int part3 = packets[i][18+(j*4)] <<8;
-                int part4 = packets[i][19+(j*4)];
-                int total = (part1 | part2 | part3 | part4);
+
+                int payload_part = (packets[i][16+(j*4)<<24 | packets[i][17+(j*4)] <<16 | packets[i][18+(j*4)] <<8] | packets[i][19+(j*4)]);
+                
                 if(array_len>(fragment_offset +j)){
-                    array[fragment_offset+j] = total;
-                    count++;
+                    array[fragment_offset+j] = payload_part;
+                    return_num++;
                 }
             }
             
@@ -178,7 +176,7 @@ unsigned int reconstruct_array_sf(unsigned char *packets[], unsigned int packets
      for (int k = 0; k<array_len; k++){
          printf("%d ", array[k]);
      }
-    return count;
+    return return_num;
 }
 
 unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned char *packets[], unsigned int packets_len,
