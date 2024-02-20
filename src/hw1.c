@@ -261,9 +261,10 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
         packets[i][3] &= ~(1<<6);
         packets[i][3] &= ~(1<<5);
         packets[i][3] &= ~(1<<4);
-        packets[i][3] <<= 28;
-        packets[i][3] |= dest_addr; // Mistake but I can't find it
-        packets[i][3] >>= 24;
+        packets[i][3] <<= 4;
+        packets[i][3] |= dest_addr>>24; // Mistake but I can't find it
+        
+        
         
 
         packets[i][4] = dest_addr>>16;
