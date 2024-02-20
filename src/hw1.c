@@ -341,7 +341,7 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
         packets[i][8] >>=6;
 
 
-        packets[i][9] = fragment_offset;
+        packets[i][9] |= fragment_offset;
         packets[i][9] &= ~(1<<13);
         packets[i][9] &= ~(1<<12);
         packets[i][9] &= ~(1<<11);
@@ -350,10 +350,10 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
         packets[i][9] &= ~(1<<8);
         packets[i][9] &= ~(1<<7);
         packets[i][9] &= ~(1<<6);
-        packets[i][9] <<= 14;
+        packets[i][9] <<= 2;
         int packet_length = 16 + max_payload; // PACKET LENGTH IS HERE
-        packets[i][9] |= packet_length;
-        packets[i][9] >>= 12;
+        packets[i][9] |= packet_length>>12;
+        
 
 
         packets[i][10] = packet_length;
@@ -376,9 +376,10 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
         packets[i][11] &= ~(1<<6);
         packets[i][11] &= ~(1<<5);
         packets[i][11] &= ~(1<<4);
-        packets[i][11] <<= 5;
-        packets[i][11] |= maximum_hop_count;
-        packets[i][11] >>= 1;
+        packets[i][11] <<= 4;
+        packets[i][11] |= maximum_hop_count>>1;
+        
+        
 
         
 
@@ -388,7 +389,7 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
 
         //PAYLOAD PART
         int packet_index = 16;
-        for (int j = fragment_offset; j<fragment_offset+max_payload || j<array_len; j++){
+        for (int j = fragment_offset; j<fragment_offset+max_payload && j<array_len; j++){
             int payload_num = array[j];
             packets[i][packet_index] = payload_num>>24;
 
@@ -473,16 +474,15 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
             packet_index+=4;
         }
 
-
-        packets[i][12] |= maximum_hop_count;
+        int checksum = compute_checksum_sf(packets[i]); 
+        packets[i][12] = maximum_hop_count;
         packets[i][12] &= ~(1<<4);
         packets[i][12] &= ~(1<<3);
         packets[i][12] &= ~(1<<2);
         packets[i][12] &= ~(1<<1);
-        packets[i][12] <<= 23;
-        int checksum = compute_checksum_sf(packets[i]);                  //CALCULATE IT LATER
+        packets[i][12] <<= 8;
         packets[i][12] |= checksum;
-        packets[i][12] >>= 16;
+        packets[i][12] >>= 25;
 
         packets[i][13] = checksum>>8;
         packets[i][13] &= ~(1<<22);
