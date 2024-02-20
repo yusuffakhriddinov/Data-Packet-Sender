@@ -184,6 +184,7 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
                           unsigned int src_port, unsigned int dest_port, unsigned int maximum_hop_count,
                           unsigned int compression_scheme, unsigned int traffic_class)
 {
+    int count_packets = 0;
     for (int i = 0; i<packets_len; i++){
         unsigned int num_bytes = 16+ max_payload;
         packets[i] = malloc(num_bytes);
@@ -211,6 +212,7 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
         packets[i][1] &= ~(1<<9);
         packets[i][1] &= ~(1<<8);
 
+        
         packets[i][2] = src_addr>>4;
         packets[i][2] &= ~(1<<27);
         packets[i][2] &= ~(1<<26);
@@ -233,6 +235,7 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
         packets[i][2] &= ~(1<<9);
         packets[i][2] &= ~(1<<8);
 
+        
         packets[i][3] = src_addr;
         packets[i][3] &= ~(1<<27);
         packets[i][3] &= ~(1<<26);
@@ -259,8 +262,9 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
         packets[i][3] &= ~(1<<5);
         packets[i][3] &= ~(1<<4);
         packets[i][3] <<= 28;
-        packets[i][3] |= dest_addr;
+        packets[i][3] |= dest_addr; // Mistake but I can't find it
         packets[i][3] >>= 24;
+        
 
         packets[i][4] = dest_addr>>16;
         packets[i][4] &= ~(1<<27);
@@ -375,49 +379,7 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
         packets[i][11] |= maximum_hop_count;
         packets[i][11] >>= 1;
 
-        packets[i][12] = maximum_hop_count;
-        packets[i][12] &= ~(1<<4);
-        packets[i][12] &= ~(1<<3);
-        packets[i][12] &= ~(1<<2);
-        packets[i][12] &= ~(1<<1);
-        packets[i][12] <<= 23;
-        int checksum = 0;                  //CALCULATE IT LATER
-        packets[i][12] |= checksum;
-        packets[i][12] >>= 16;
-
-        packets[i][13] = checksum>>8;
-        packets[i][13] &= ~(1<<22);
-        packets[i][13] &= ~(1<<21);
-        packets[i][13] &= ~(1<<20);
-        packets[i][13] &= ~(1<<19);
-        packets[i][13] &= ~(1<<18);
-        packets[i][13] &= ~(1<<17);
-        packets[i][13] &= ~(1<<16);
-        packets[i][13] &= ~(1<<15);
-        packets[i][13] &= ~(1<<14);
-        packets[i][13] &= ~(1<<13);
-        packets[i][13] &= ~(1<<12);
-        packets[i][13] &= ~(1<<11);
-        packets[i][13] &= ~(1<<10);
-        packets[i][13] &= ~(1<<9);
-        packets[i][13] &= ~(1<<8);
-
-        packets[i][14] = checksum;
-        packets[i][14] &= ~(1<<22);
-        packets[i][14] &= ~(1<<21);
-        packets[i][14] &= ~(1<<20);
-        packets[i][14] &= ~(1<<19);
-        packets[i][14] &= ~(1<<18);
-        packets[i][14] &= ~(1<<17);
-        packets[i][14] &= ~(1<<16);
-        packets[i][14] &= ~(1<<15);
-        packets[i][14] &= ~(1<<14);
-        packets[i][14] &= ~(1<<13);
-        packets[i][14] &= ~(1<<12);
-        packets[i][14] &= ~(1<<11);
-        packets[i][14] &= ~(1<<10);
-        packets[i][14] &= ~(1<<9);
-        packets[i][14] &= ~(1<<8);
+        
 
         packets[i][15] = compression_scheme<<6;
         packets[i][15] |= traffic_class;
@@ -511,15 +473,54 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
         }
 
 
+        packets[i][12] |= maximum_hop_count;
+        packets[i][12] &= ~(1<<4);
+        packets[i][12] &= ~(1<<3);
+        packets[i][12] &= ~(1<<2);
+        packets[i][12] &= ~(1<<1);
+        packets[i][12] <<= 23;
+        int checksum = compute_checksum_sf(packets[i]);                  //CALCULATE IT LATER
+        packets[i][12] |= checksum;
+        packets[i][12] >>= 16;
 
-        
+        packets[i][13] = checksum>>8;
+        packets[i][13] &= ~(1<<22);
+        packets[i][13] &= ~(1<<21);
+        packets[i][13] &= ~(1<<20);
+        packets[i][13] &= ~(1<<19);
+        packets[i][13] &= ~(1<<18);
+        packets[i][13] &= ~(1<<17);
+        packets[i][13] &= ~(1<<16);
+        packets[i][13] &= ~(1<<15);
+        packets[i][13] &= ~(1<<14);
+        packets[i][13] &= ~(1<<13);
+        packets[i][13] &= ~(1<<12);
+        packets[i][13] &= ~(1<<11);
+        packets[i][13] &= ~(1<<10);
+        packets[i][13] &= ~(1<<9);
+        packets[i][13] &= ~(1<<8);
+
+        packets[i][14] = checksum;
+        packets[i][14] &= ~(1<<22);
+        packets[i][14] &= ~(1<<21);
+        packets[i][14] &= ~(1<<20);
+        packets[i][14] &= ~(1<<19);
+        packets[i][14] &= ~(1<<18);
+        packets[i][14] &= ~(1<<17);
+        packets[i][14] &= ~(1<<16);
+        packets[i][14] &= ~(1<<15);
+        packets[i][14] &= ~(1<<14);
+        packets[i][14] &= ~(1<<13);
+        packets[i][14] &= ~(1<<12);
+        packets[i][14] &= ~(1<<11);
+        packets[i][14] &= ~(1<<10);
+        packets[i][14] &= ~(1<<9);
+        packets[i][14] &= ~(1<<8);
 
 
-
-
-
+        count_packets++;
     }
 
 
-    return -1;
+    return count_packets;
 }
