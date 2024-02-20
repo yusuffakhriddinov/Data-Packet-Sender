@@ -480,9 +480,10 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
         packets[i][12] &= ~(1<<3);
         packets[i][12] &= ~(1<<2);
         packets[i][12] &= ~(1<<1);
-        packets[i][12] <<= 8;
-        packets[i][12] |= checksum;
-        packets[i][12] >>= 25;
+        packets[i][12] <<= 7;
+        unsigned int checky = checksum;
+        checky >>= 16;
+        packets[i][12] = checky | packets[i][12];
 
         packets[i][13] = checksum>>8;
         packets[i][13] &= ~(1<<22);
