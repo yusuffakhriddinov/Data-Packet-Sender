@@ -184,17 +184,114 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
                           unsigned int src_port, unsigned int dest_port, unsigned int maximum_hop_count,
                           unsigned int compression_scheme, unsigned int traffic_class)
 {
-    (void)array;
-    (void)array_len;
-    (void)packets;
-    (void)packets_len;
-    (void)max_payload;
-    (void)src_addr;
-    (void)dest_addr;
-    (void)src_port;
-    (void)dest_port;
-    (void)maximum_hop_count;
-    (void)compression_scheme;
-    (void)traffic_class;
+    for (int i = 0; i<packets_len; i++){
+        unsigned int num_bytes = 16+ max_payload;
+        packets[i] = malloc(num_bytes);
+        packets[i][0] = src_addr >> 20;
+
+        packets[i][1] = src_addr >>12;
+        packets[i][1] &= ~(1<<31);
+        packets[i][1] &= ~(1<<30);
+        packets[i][1] &= ~(1<<29);
+        packets[i][1] &= ~(1<<28);
+        packets[i][1] &= ~(1<<27);
+        packets[i][1] &= ~(1<<26);
+        packets[i][1] &= ~(1<<25);
+        packets[i][1] &= ~(1<<24);
+        packets[i][1] &= ~(1<<23);
+        packets[i][1] &= ~(1<<22);
+        packets[i][1] &= ~(1<<21);
+        packets[i][1] &= ~(1<<20);
+        packets[i][1] &= ~(1<<19);
+        packets[i][1] &= ~(1<<18);
+        packets[i][1] &= ~(1<<17);
+        packets[i][1] &= ~(1<<16);
+        packets[i][1] &= ~(1<<15);
+        packets[i][1] &= ~(1<<14);
+        packets[i][1] &= ~(1<<13);
+        packets[i][1] &= ~(1<<12);
+        packets[i][1] &= ~(1<<11);
+        packets[i][1] &= ~(1<<10);
+        packets[i][1] &= ~(1<<9);
+        packets[i][1] &= ~(1<<8);
+
+        packets[i][2] = src_addr>>4;
+        packets[i][2] &= ~(1<<23);
+        packets[i][2] &= ~(1<<22);
+        packets[i][2] &= ~(1<<21);
+        packets[i][2] &= ~(1<<20);
+        packets[i][2] &= ~(1<<19);
+        packets[i][2] &= ~(1<<18);
+        packets[i][2] &= ~(1<<17);
+        packets[i][2] &= ~(1<<16);
+        packets[i][2] &= ~(1<<15);
+        packets[i][2] &= ~(1<<14);
+        packets[i][2] &= ~(1<<13);
+        packets[i][2] &= ~(1<<12);
+        packets[i][2] &= ~(1<<11);
+        packets[i][2] &= ~(1<<10);
+        packets[i][2] &= ~(1<<9);
+        packets[i][2] &= ~(1<<8);
+
+        packets[i][3] = src_addr;
+        packets[i][3] &= ~(1<<31);
+        packets[i][3] &= ~(1<<30);
+        packets[i][3] &= ~(1<<29);
+        packets[i][3] &= ~(1<<28);
+        packets[i][3] &= ~(1<<27);
+        packets[i][3] &= ~(1<<26);
+        packets[i][3] &= ~(1<<25);
+        packets[i][3] &= ~(1<<24);
+        packets[i][3] &= ~(1<<23);
+        packets[i][3] &= ~(1<<22);
+        packets[i][3] &= ~(1<<21);
+        packets[i][3] &= ~(1<<20);
+        packets[i][3] &= ~(1<<19);
+        packets[i][3] &= ~(1<<18);
+        packets[i][3] &= ~(1<<17);
+        packets[i][3] &= ~(1<<16);
+        packets[i][3] &= ~(1<<15);
+        packets[i][3] &= ~(1<<14);
+        packets[i][3] &= ~(1<<13);
+        packets[i][3] &= ~(1<<12);
+        packets[i][3] &= ~(1<<11);
+        packets[i][3] &= ~(1<<10);
+        packets[i][3] &= ~(1<<9);
+        packets[i][3] &= ~(1<<8);
+        packets[i][3] &= ~(1<<7);
+        packets[i][3] &= ~(1<<6);
+        packets[i][3] &= ~(1<<5);
+        packets[i][3] &= ~(1<<4);
+        packets[i][3] <<= 28;
+        packets[i][3] |= src_addr;
+        packets[i][3] >>= 24;
+
+        packets[i][4] = src_addr>>16;
+        packets[i][4] &= ~(1<<23);
+        packets[i][4] &= ~(1<<22);
+        packets[i][4] &= ~(1<<21);
+        packets[i][4] &= ~(1<<20);
+        packets[i][4] &= ~(1<<19);
+        packets[i][4] &= ~(1<<18);
+        packets[i][4] &= ~(1<<17);
+        packets[i][4] &= ~(1<<16);
+        packets[i][4] &= ~(1<<15);
+        packets[i][4] &= ~(1<<14);
+        packets[i][4] &= ~(1<<13);
+        packets[i][4] &= ~(1<<12);
+        packets[i][4] &= ~(1<<11);
+        packets[i][4] &= ~(1<<10);
+        packets[i][4] &= ~(1<<9);
+        packets[i][4] &= ~(1<<8);
+
+        
+
+
+
+
+
+    }
+
+
     return -1;
 }
