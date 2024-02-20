@@ -190,10 +190,6 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
         packets[i][0] = src_addr >> 20;
 
         packets[i][1] = src_addr >>12;
-        packets[i][1] &= ~(1<<31);
-        packets[i][1] &= ~(1<<30);
-        packets[i][1] &= ~(1<<29);
-        packets[i][1] &= ~(1<<28);
         packets[i][1] &= ~(1<<27);
         packets[i][1] &= ~(1<<26);
         packets[i][1] &= ~(1<<25);
@@ -216,6 +212,10 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
         packets[i][1] &= ~(1<<8);
 
         packets[i][2] = src_addr>>4;
+        packets[i][2] &= ~(1<<27);
+        packets[i][2] &= ~(1<<26);
+        packets[i][2] &= ~(1<<25);
+        packets[i][2] &= ~(1<<24);
         packets[i][2] &= ~(1<<23);
         packets[i][2] &= ~(1<<22);
         packets[i][2] &= ~(1<<21);
@@ -234,10 +234,6 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
         packets[i][2] &= ~(1<<8);
 
         packets[i][3] = src_addr;
-        packets[i][3] &= ~(1<<31);
-        packets[i][3] &= ~(1<<30);
-        packets[i][3] &= ~(1<<29);
-        packets[i][3] &= ~(1<<28);
         packets[i][3] &= ~(1<<27);
         packets[i][3] &= ~(1<<26);
         packets[i][3] &= ~(1<<25);
@@ -263,10 +259,14 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
         packets[i][3] &= ~(1<<5);
         packets[i][3] &= ~(1<<4);
         packets[i][3] <<= 28;
-        packets[i][3] |= src_addr;
+        packets[i][3] |= dest_addr;
         packets[i][3] >>= 24;
 
-        packets[i][4] = src_addr>>16;
+        packets[i][4] = dest_addr>>16;
+        packets[i][4] &= ~(1<<27);
+        packets[i][4] &= ~(1<<26);
+        packets[i][4] &= ~(1<<25);
+        packets[i][4] &= ~(1<<24);
         packets[i][4] &= ~(1<<23);
         packets[i][4] &= ~(1<<22);
         packets[i][4] &= ~(1<<21);
@@ -283,6 +283,234 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
         packets[i][4] &= ~(1<<10);
         packets[i][4] &= ~(1<<9);
         packets[i][4] &= ~(1<<8);
+
+        packets[i][5] = dest_addr>>8;
+        packets[i][5] &= ~(1<<27);
+        packets[i][5] &= ~(1<<26);
+        packets[i][5] &= ~(1<<25);
+        packets[i][5] &= ~(1<<24);
+        packets[i][5] &= ~(1<<23);
+        packets[i][5] &= ~(1<<22);
+        packets[i][5] &= ~(1<<21);
+        packets[i][5] &= ~(1<<20);
+        packets[i][5] &= ~(1<<19);
+        packets[i][5] &= ~(1<<18);
+        packets[i][5] &= ~(1<<17);
+        packets[i][5] &= ~(1<<16);
+        packets[i][5] &= ~(1<<15);
+        packets[i][5] &= ~(1<<14);
+        packets[i][5] &= ~(1<<13);
+        packets[i][5] &= ~(1<<12);
+        packets[i][5] &= ~(1<<11);
+        packets[i][5] &= ~(1<<10);
+        packets[i][5] &= ~(1<<9);
+        packets[i][5] &= ~(1<<8);
+
+        packets[i][6] = dest_addr;
+        packets[i][6] &= ~(1<<27);
+        packets[i][6] &= ~(1<<26);
+        packets[i][6] &= ~(1<<25);
+        packets[i][6] &= ~(1<<24);
+        packets[i][6] &= ~(1<<23);
+        packets[i][6] &= ~(1<<22);
+        packets[i][6] &= ~(1<<21);
+        packets[i][6] &= ~(1<<20);
+        packets[i][6] &= ~(1<<19);
+        packets[i][6] &= ~(1<<18);
+        packets[i][6] &= ~(1<<17);
+        packets[i][6] &= ~(1<<16);
+        packets[i][6] &= ~(1<<15);
+        packets[i][6] &= ~(1<<14);
+        packets[i][6] &= ~(1<<13);
+        packets[i][6] &= ~(1<<12);
+        packets[i][6] &= ~(1<<11);
+        packets[i][6] &= ~(1<<10);
+        packets[i][6] &= ~(1<<9);
+        packets[i][6] &= ~(1<<8);
+
+        packets[i][7] = src_port<<4;
+        packets[i][7] |= dest_port;
+
+        int fragment_offset = i*max_payload;
+        packets[i][8] = fragment_offset; //fragment offset
+        packets[i][8] >>=6;
+
+
+        packets[i][9] = fragment_offset;
+        packets[i][9] &= ~(1<<13);
+        packets[i][9] &= ~(1<<12);
+        packets[i][9] &= ~(1<<11);
+        packets[i][9] &= ~(1<<10);
+        packets[i][9] &= ~(1<<9);
+        packets[i][9] &= ~(1<<8);
+        packets[i][9] &= ~(1<<7);
+        packets[i][9] &= ~(1<<6);
+        packets[i][9] <<= 14;
+        int packet_length = 16 + max_payload; // PACKET LENGTH IS HERE
+        packets[i][9] |= packet_length;
+        packets[i][9] >>= 12;
+
+
+        packets[i][10] = packet_length;
+        packets[i][10] >>= 4;  
+        packets[i][10] &= ~(1<<13);
+        packets[i][10] &= ~(1<<12);
+        packets[i][10] &= ~(1<<11);
+        packets[i][10] &= ~(1<<10);
+        packets[i][10] &= ~(1<<9);
+        packets[i][10] &= ~(1<<8);
+
+        packets[i][11] = packet_length;
+        packets[i][11] &= ~(1<<13);
+        packets[i][11] &= ~(1<<12);
+        packets[i][11] &= ~(1<<11);
+        packets[i][11] &= ~(1<<10);
+        packets[i][11] &= ~(1<<9);
+        packets[i][11] &= ~(1<<8);
+        packets[i][11] &= ~(1<<7);
+        packets[i][11] &= ~(1<<6);
+        packets[i][11] &= ~(1<<5);
+        packets[i][11] &= ~(1<<4);
+        packets[i][11] <<= 5;
+        packets[i][11] |= maximum_hop_count;
+        packets[i][11] >>= 1;
+
+        packets[i][12] = maximum_hop_count;
+        packets[i][12] &= ~(1<<4);
+        packets[i][12] &= ~(1<<3);
+        packets[i][12] &= ~(1<<2);
+        packets[i][12] &= ~(1<<1);
+        packets[i][12] <<= 23;
+        int checksum = 0;                  //CALCULATE IT LATER
+        packets[i][12] |= checksum;
+        packets[i][12] >>= 16;
+
+        packets[i][13] = checksum>>8;
+        packets[i][13] &= ~(1<<22);
+        packets[i][13] &= ~(1<<21);
+        packets[i][13] &= ~(1<<20);
+        packets[i][13] &= ~(1<<19);
+        packets[i][13] &= ~(1<<18);
+        packets[i][13] &= ~(1<<17);
+        packets[i][13] &= ~(1<<16);
+        packets[i][13] &= ~(1<<15);
+        packets[i][13] &= ~(1<<14);
+        packets[i][13] &= ~(1<<13);
+        packets[i][13] &= ~(1<<12);
+        packets[i][13] &= ~(1<<11);
+        packets[i][13] &= ~(1<<10);
+        packets[i][13] &= ~(1<<9);
+        packets[i][13] &= ~(1<<8);
+
+        packets[i][14] = checksum;
+        packets[i][14] &= ~(1<<22);
+        packets[i][14] &= ~(1<<21);
+        packets[i][14] &= ~(1<<20);
+        packets[i][14] &= ~(1<<19);
+        packets[i][14] &= ~(1<<18);
+        packets[i][14] &= ~(1<<17);
+        packets[i][14] &= ~(1<<16);
+        packets[i][14] &= ~(1<<15);
+        packets[i][14] &= ~(1<<14);
+        packets[i][14] &= ~(1<<13);
+        packets[i][14] &= ~(1<<12);
+        packets[i][14] &= ~(1<<11);
+        packets[i][14] &= ~(1<<10);
+        packets[i][14] &= ~(1<<9);
+        packets[i][14] &= ~(1<<8);
+
+        packets[i][15] = compression_scheme<<6;
+        packets[i][15] |= traffic_class;
+
+
+        //PAYLOAD PART
+        int packet_index = 16;
+        for (int j = fragment_offset; j<fragment_offset+max_payload || j<array_len; j++){
+            int payload_num = array[j];
+            packets[i][packet_index] = payload_num>>24;
+
+            packets[i][packet_index+1] = payload_num>>16;
+            packets[i][packet_index+1] &= ~(1<<31);
+            packets[i][packet_index+1] &= ~(1<<30);
+            packets[i][packet_index+1] &= ~(1<<29);
+            packets[i][packet_index+1] &= ~(1<<28);
+            packets[i][packet_index+1] &= ~(1<<27);
+            packets[i][packet_index+1] &= ~(1<<26);
+            packets[i][packet_index+1] &= ~(1<<25);
+            packets[i][packet_index+1] &= ~(1<<24);
+            packets[i][packet_index+1] &= ~(1<<23);
+            packets[i][packet_index+1] &= ~(1<<22);
+            packets[i][packet_index+1] &= ~(1<<21);
+            packets[i][packet_index+1] &= ~(1<<20);
+            packets[i][packet_index+1] &= ~(1<<19);
+            packets[i][packet_index+1] &= ~(1<<18);
+            packets[i][packet_index+1] &= ~(1<<17);
+            packets[i][packet_index+1] &= ~(1<<16);
+            packets[i][packet_index+1] &= ~(1<<15);
+            packets[i][packet_index+1] &= ~(1<<14);
+            packets[i][packet_index+1] &= ~(1<<13);
+            packets[i][packet_index+1] &= ~(1<<12);
+            packets[i][packet_index+1] &= ~(1<<11);
+            packets[i][packet_index+1] &= ~(1<<10);
+            packets[i][packet_index+1] &= ~(1<<9);
+            packets[i][packet_index+1] &= ~(1<<8);
+
+            packets[i][packet_index+2] = payload_num>>8;
+            packets[i][packet_index+2] &= ~(1<<31);
+            packets[i][packet_index+2] &= ~(1<<30);
+            packets[i][packet_index+2] &= ~(1<<29);
+            packets[i][packet_index+2] &= ~(1<<28);
+            packets[i][packet_index+2] &= ~(1<<27);
+            packets[i][packet_index+2] &= ~(1<<26);
+            packets[i][packet_index+2] &= ~(1<<25);
+            packets[i][packet_index+2] &= ~(1<<24);
+            packets[i][packet_index+2] &= ~(1<<23);
+            packets[i][packet_index+2] &= ~(1<<22);
+            packets[i][packet_index+2] &= ~(1<<21);
+            packets[i][packet_index+2] &= ~(1<<20);
+            packets[i][packet_index+2] &= ~(1<<19);
+            packets[i][packet_index+2] &= ~(1<<18);
+            packets[i][packet_index+2] &= ~(1<<17);
+            packets[i][packet_index+2] &= ~(1<<16);
+            packets[i][packet_index+2] &= ~(1<<15);
+            packets[i][packet_index+2] &= ~(1<<14);
+            packets[i][packet_index+2] &= ~(1<<13);
+            packets[i][packet_index+2] &= ~(1<<12);
+            packets[i][packet_index+2] &= ~(1<<11);
+            packets[i][packet_index+2] &= ~(1<<10);
+            packets[i][packet_index+2] &= ~(1<<9);
+            packets[i][packet_index+2] &= ~(1<<8);
+
+            packets[i][packet_index+3] = payload_num;
+            packets[i][packet_index+3] &= ~(1<<31);
+            packets[i][packet_index+3] &= ~(1<<30);
+            packets[i][packet_index+3] &= ~(1<<29);
+            packets[i][packet_index+3] &= ~(1<<28);
+            packets[i][packet_index+3] &= ~(1<<27);
+            packets[i][packet_index+3] &= ~(1<<26);
+            packets[i][packet_index+3] &= ~(1<<25);
+            packets[i][packet_index+3] &= ~(1<<24);
+            packets[i][packet_index+3] &= ~(1<<23);
+            packets[i][packet_index+3] &= ~(1<<22);
+            packets[i][packet_index+3] &= ~(1<<21);
+            packets[i][packet_index+3] &= ~(1<<20);
+            packets[i][packet_index+3] &= ~(1<<19);
+            packets[i][packet_index+3] &= ~(1<<18);
+            packets[i][packet_index+3] &= ~(1<<17);
+            packets[i][packet_index+3] &= ~(1<<16);
+            packets[i][packet_index+3] &= ~(1<<15);
+            packets[i][packet_index+3] &= ~(1<<14);
+            packets[i][packet_index+3] &= ~(1<<13);
+            packets[i][packet_index+3] &= ~(1<<12);
+            packets[i][packet_index+3] &= ~(1<<11);
+            packets[i][packet_index+3] &= ~(1<<10);
+            packets[i][packet_index+3] &= ~(1<<9);
+            packets[i][packet_index+3] &= ~(1<<8);
+
+            packet_index+=4;
+        }
+
+
 
         
 
