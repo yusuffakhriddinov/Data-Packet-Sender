@@ -379,6 +379,12 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
         packets[i][11] <<= 4;
         packets[i][11] |= maximum_hop_count>>1;
         
+        packets[i][12] = maximum_hop_count;
+        packets[i][12] &= ~(1<<4);
+        packets[i][12] &= ~(1<<3);
+        packets[i][12] &= ~(1<<2);
+        packets[i][12] &= ~(1<<1);
+        packets[i][12] <<= 7;
         
 
         
@@ -473,16 +479,11 @@ unsigned int packetize_array_sf(int *array, unsigned int array_len, unsigned cha
 
             packet_index+=4;
         }
-
-        int checksum = compute_checksum_sf(packets[i]); 
-        packets[i][12] = maximum_hop_count;
-        packets[i][12] &= ~(1<<4);
-        packets[i][12] &= ~(1<<3);
-        packets[i][12] &= ~(1<<2);
-        packets[i][12] &= ~(1<<1);
-        packets[i][12] <<= 7;
-        packets[i][12] |= checksum;
         
+        int checksum = compute_checksum_sf(packets[i]); 
+        
+        packets[i][12] |= checksum;
+        packets[i][12] >>=16;
 
         packets[i][13] = checksum>>8;
         packets[i][13] &= ~(1<<22);
